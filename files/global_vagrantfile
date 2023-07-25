@@ -1,0 +1,29 @@
+# some defaults for all Vagrantfile's for $USER
+#
+Vagrant.configure('2') do |config|
+
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+  end
+
+  if Vagrant.has_plugin?("vagrant-proxyconf")
+    config.proxy.enabled  = true
+    config.proxy.http     = "http://proxy.example.com:8080"
+    config.proxy.https    = "http://proxy.example.com:8080"
+    config.proxy.no_proxy = "localhost,127.0.0.1"
+  end
+
+  if Vagrant.has_plugin?('vagrant-registration')
+    config.registration.manager = 'subscription_manager'
+    config.registration.force = true
+    config.registration.auto_attach = true
+    config.registration.username = 'rhel_user_name'
+    config.vagrant.sensitive = ENV['SUB_PASSWORD']
+    config.registration.password = [ENV['SUB_PASSWORD'], ENV['http_proxy_password']]
+    config.registration.proxy = ENV['http_proxy']
+    config.registration.proxyUser =  ENV['http_proxy_user']
+    config.registration.proxyPassword = ENV['http_proxy_password']
+  end
+
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+end
